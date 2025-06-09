@@ -1,5 +1,10 @@
-.env
 .venv
-*.log
-**/__pycache__/
+.env
 .idea
+db.sqlite3
+test.py
+bot.log
+
+**/__pycache__/
+locales/**/*.pot
+locales/**/*.po

@@ -3,16 +3,20 @@ import logging
 import sys
 from aiogram import Dispatcher
 from core.config import settings
-from core.database import init_db
-from handlers.start import auth
+from core.database import async_db
+from handlers.start import auth, middleware
 
 
 async def main():
     # Creating async db
-    await init_db()
+    await async_db()
 
     # Connection to db
     dp = Dispatcher()
+
+    # I18n localization
+    dp.message.middleware(middleware.I18nMiddleware())
+    dp.callback_query.middleware(middleware.I18nMiddleware())
 
     # Routers
     dp.include_routers(
