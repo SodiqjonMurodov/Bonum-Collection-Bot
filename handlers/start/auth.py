@@ -2,8 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-
-from handlers.start.kb import get_phone_request_btn
+from handlers.start.kb import get_phone_request_btn, get_region_request_btn
 from handlers.start.state import RegStatesGroup
 from core.dictionary import *
 from queries.users import is_user_authenticated
@@ -17,7 +16,7 @@ async def cmd_start(message: Message, state: FSMContext, **kwargs):
     chat_id = message.from_user.id
     kb = None
     if not await is_user_authenticated(chat_id):
-        kb = await get_phone_request_btn()
+        kb = await get_region_request_btn()
         await state.set_state(RegStatesGroup.lang)
         return await message.answer(text=choice_lang_message, reply_markup=kb)
 

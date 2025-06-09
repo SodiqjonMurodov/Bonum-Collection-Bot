@@ -1,5 +1,6 @@
 import httpx
 from core.config import settings
+from core.utils import normalize_phone_number
 
 API_TOKEN = settings.get_moysklad_token()
 BASE_URL = settings.get_base_url()
@@ -10,20 +11,21 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-async def check_counterparty_by_phone(phone: str) -> dict | None:
-    url = f"{BASE_URL}/entity/counterparty"
-    params = {
-        "filter": f"phone={phone}"
-    }
+async def check_counterparty_by_phone(phone_number):
+    url = f"{settings.BASE_URL}/entity/counterparty"
+    clean_phone = await normalize_phone_number(phone_number)
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=HEADERS, params=params)
+        response = await client.get(url, headers=HEADERS)
 
     if response.status_code == 200:
-        data = response.json()
+        data = await response.json()
         rows = data.get("rows", [])
-        if rows:
-            return rows[0]  # Birinchi topilgan kontragentni qaytaradi
+        for index, row in enumerate(rows):
+            row_phone = await normalize_phone_number(row.get("phone", ""))
+            print(f"phone{index}", row_phone)
+            if row_phone == clean_phone:
+                return row
     return None
 
 

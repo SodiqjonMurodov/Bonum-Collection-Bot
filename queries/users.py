@@ -1,5 +1,5 @@
 from core.database import async_session
-from core.models import *
+from core.models import UsersModel
 from sqlalchemy import select
 
 
@@ -41,3 +41,4 @@ async def update_user(chat_id: int, query):
             await session.commit()
             return True
         return False
+
